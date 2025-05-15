@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -72,8 +73,8 @@ const ProfileView = () => {
               type: widget.type as any,
               title: widget.title || "",
               content: widget.content as any,
-              gridSpan: widget.grid_span || 1,
-              rowSpan: widget.row_span || 1,
+              gridSpan: (widget.grid_span || 1) as 1 | 2,
+              rowSpan: (widget.row_span || 1) as 1 | 2,
             })) || [],
           };
 

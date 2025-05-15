@@ -60,3 +60,6 @@ export interface UserProfile {
   avatarUrl: string;
   widgets: Widget[];
 }
+
+// Re-export from our Supabase custom types
+export * from './supabase';

@@ -1,9 +1,11 @@
-
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ExternalLink, Instagram, Twitter, Github, Linkedin, Youtube, Facebook } from "lucide-react";
-import { UserProfile, Widget } from "@/types";
+import { UserProfile } from "@/types";
+import { supabase } from "@/integrations/supabase/client";
+import { Widget as SupabaseWidget, WidgetContent, isLinkWidget, isSocialWidget, isTextWidget, isImageWidget, isMapWidget } from "@/types/supabase";
+import { toast } from "@/hooks/use-toast";
 
 const ProfileView = () => {
   const { username } = useParams<{ username: string }>();
@@ -12,24 +14,82 @@ const ProfileView = () => {
   const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
-    // Search in localStorage for a profile with this username
-    const findProfile = () => {
-      const allItems = { ...localStorage };
-      const profileKeys = Object.keys(allItems).filter(key => key.startsWith('bentoProfile-'));
-      
-      for (const key of profileKeys) {
-        const storedProfile = JSON.parse(localStorage.getItem(key) || "{}");
-        if (storedProfile.username === username) {
-          setProfile(storedProfile);
-          return;
+    const fetchProfile = async () => {
+      try {
+        // First try to fetch from Supabase
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('username', username)
+          .single();
+
+        if (profileError || !profileData) {
+          // If not found in Supabase, check localStorage as fallback
+          const findLocalProfile = () => {
+            const allItems = { ...localStorage };
+            const profileKeys = Object.keys(allItems).filter(key => key.startsWith('bentoProfile-'));
+            
+            for (const key of profileKeys) {
+              const storedProfile = JSON.parse(localStorage.getItem(key) || "{}");
+              if (storedProfile.username === username) {
+                return storedProfile;
+              }
+            }
+            return null;
+          };
+          
+          const localProfile = findLocalProfile();
+          if (localProfile) {
+            setProfile(localProfile);
+          } else {
+            setNotFound(true);
+          }
+        } else {
+          // Profile found in Supabase, now fetch their widgets
+          const { data: widgetsData, error: widgetsError } = await supabase
+            .from('widgets')
+            .select('*')
+            .eq('user_id', profileData.id)
+            .order('position');
+
+          if (widgetsError) {
+            toast({
+              title: "Error",
+              description: "Could not load widgets",
+              variant: "destructive",
+            });
+          }
+
+          // Convert the Supabase format to our app's format
+          const userProfile: UserProfile = {
+            id: profileData.id,
+            username: profileData.username,
+            displayName: profileData.display_name,
+            bio: profileData.bio || "",
+            avatarUrl: profileData.avatar_url || "",
+            widgets: widgetsData?.map(widget => ({
+              id: widget.id,
+              type: widget.type as any,
+              title: widget.title || "",
+              content: widget.content as any,
+              gridSpan: widget.grid_span || 1,
+              rowSpan: widget.row_span || 1,
+            })) || [],
+          };
+
+          setProfile(userProfile);
         }
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+        setNotFound(true);
+      } finally {
+        setLoading(false);
       }
-      
-      setNotFound(true);
     };
-    
-    findProfile();
-    setLoading(false);
+
+    if (username) {
+      fetchProfile();
+    }
   }, [username]);
 
   const getSocialIcon = (platform: string) => {
@@ -51,7 +111,7 @@ const ProfileView = () => {
     }
   };
 
-  const renderWidget = (widget: Widget) => {
+  const renderWidget = (widget: any) => {
     switch (widget.type) {
       case "link":
         return (

@@ -1,0 +1,151 @@
+
+import React from "react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { BackgroundType, UserProfile } from "@/types";
+import ImageUploader from "@/components/ImageUploader";
+import { gradients } from "@/utils/backgroundStyles";
+
+interface ProfileFormData {
+  displayName: string;
+  bio: string;
+  avatarUrl: string;
+  backgroundColor: string;
+  backgroundType: BackgroundType;
+  backgroundGradient: string;
+  backgroundImage: string;
+}
+
+interface ProfileEditFormProps {
+  formData: ProfileFormData;
+  setFormData: React.Dispatch<React.SetStateAction<ProfileFormData>>;
+  onCancel: () => void;
+  onSave: () => void;
+}
+
+const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
+  formData,
+  setFormData,
+  onCancel,
+  onSave
+}) => {
+  const handleAvatarImageUploaded = (imageUrl: string) => {
+    setFormData({
+      ...formData,
+      avatarUrl: imageUrl
+    });
+  };
+
+  const handleBackgroundImageUploaded = (imageUrl: string) => {
+    setFormData({
+      ...formData,
+      backgroundImage: imageUrl
+    });
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="space-y-2">
+        <Label htmlFor="avatarUrl">Profile Picture</Label>
+        <ImageUploader 
+          onImageUploaded={handleAvatarImageUploaded}
+          defaultImage={formData.avatarUrl}
+        />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="displayName">Display Name</Label>
+        <Input
+          id="displayName"
+          value={formData.displayName}
+          onChange={(e) => setFormData({ ...formData, displayName: e.target.value })}
+        />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="bio">Bio</Label>
+        <Textarea
+          id="bio"
+          value={formData.bio}
+          onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+        />
+      </div>
+      <div className="space-y-2">
+        <Label>Profile Background</Label>
+        <Select
+          value={formData.backgroundType}
+          onValueChange={(value) => setFormData({ ...formData, backgroundType: value as BackgroundType })}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Background Type" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="color">Solid Color</SelectItem>
+            <SelectItem value="gradient">Gradient</SelectItem>
+            <SelectItem value="image">Image</SelectItem>
+          </SelectContent>
+        </Select>
+        
+        {formData.backgroundType === 'color' && (
+          <div className="mt-2">
+            <Label htmlFor="backgroundColor">Background Color</Label>
+            <div className="flex gap-2 mt-1">
+              <input
+                type="color"
+                id="backgroundColor"
+                value={formData.backgroundColor}
+                onChange={(e) => setFormData({ ...formData, backgroundColor: e.target.value })}
+                className="w-10 h-10"
+              />
+              <Input
+                value={formData.backgroundColor}
+                onChange={(e) => setFormData({ ...formData, backgroundColor: e.target.value })}
+                className="flex-1"
+              />
+            </div>
+          </div>
+        )}
+        
+        {formData.backgroundType === 'gradient' && (
+          <div className="mt-2 space-y-2">
+            <Label>Choose a Gradient</Label>
+            <div className="grid grid-cols-3 gap-2">
+              {gradients.map((gradient, index) => (
+                <button
+                  key={index}
+                  type="button"
+                  className={`h-12 rounded-md transition-all ${formData.backgroundGradient === gradient ? 'ring-2 ring-blue-500' : ''}`}
+                  style={{ background: gradient }}
+                  onClick={() => setFormData({ ...formData, backgroundGradient: gradient })}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+        
+        {formData.backgroundType === 'image' && (
+          <div className="mt-2">
+            <Label>Background Image</Label>
+            <ImageUploader 
+              onImageUploaded={handleBackgroundImageUploaded}
+              defaultImage={formData.backgroundImage}
+              className="mt-1"
+            />
+          </div>
+        )}
+      </div>
+
+      <div className="flex gap-2 w-full">
+        <Button onClick={onCancel} variant="outline" className="flex-1">
+          Cancel
+        </Button>
+        <Button onClick={onSave} className="flex-1">
+          Save Changes
+        </Button>
+      </div>
+    </div>
+  );
+};
+
+export default ProfileEditForm;

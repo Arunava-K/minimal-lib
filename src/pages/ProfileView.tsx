@@ -22,6 +22,11 @@ const ProfileView = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
+        if (!username && !isPreview) {
+          setNotFound(true);
+          return;
+        }
+
         // First try to fetch from Supabase
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
@@ -29,27 +34,41 @@ const ProfileView = () => {
           .eq('username', username)
           .single();
 
-        if (profileError || !profileData) {
-          // If not found in Supabase, check localStorage as fallback
-          const findLocalProfile = () => {
-            const allItems = { ...localStorage };
-            const profileKeys = Object.keys(allItems).filter(key => key.startsWith('bentoProfile-'));
-            
-            for (const key of profileKeys) {
-              const storedProfile = JSON.parse(localStorage.getItem(key) || "{}");
-              if (storedProfile.username === username) {
-                return storedProfile;
+        if (profileError) {
+          // Check if it's a "no rows returned" error
+          if (profileError.message?.includes('returned 0 rows') || profileError.code === 'PGRST116') {
+            // If not found in Supabase, check localStorage as fallback
+            const findLocalProfile = () => {
+              const allItems = { ...localStorage };
+              const profileKeys = Object.keys(allItems).filter(key => key.startsWith('bentoProfile-'));
+              
+              for (const key of profileKeys) {
+                const storedProfile = JSON.parse(localStorage.getItem(key) || "{}");
+                if (storedProfile.username === username) {
+                  return storedProfile;
+                }
               }
+              return null;
+            };
+            
+            const localProfile = findLocalProfile();
+            if (localProfile) {
+              setProfile(localProfile);
+            } else {
+              setNotFound(true);
             }
-            return null;
-          };
-          
-          const localProfile = findLocalProfile();
-          if (localProfile) {
-            setProfile(localProfile);
           } else {
+            // Handle other types of errors
+            console.error("Error fetching profile:", profileError);
+            toast({
+              title: "Error",
+              description: "Failed to load profile",
+              variant: "destructive",
+            });
             setNotFound(true);
           }
+        } else if (!profileData) {
+          setNotFound(true);
         } else {
           // Profile found in Supabase, now fetch their widgets
           const { data: widgetsData, error: widgetsError } = await supabase
@@ -101,10 +120,8 @@ const ProfileView = () => {
       }
     };
 
-    if (username || isPreview) {
-      fetchProfile();
-    }
-  }, [username, isPreview]);
+    fetchProfile();
+  }, [username]);
 
   if (loading) {
     return (

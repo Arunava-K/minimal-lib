@@ -2,8 +2,9 @@ import React from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { Widget, BackgroundType } from "@/types";
+import { Widget } from "@/types";
 import { ExternalLink, Instagram, Twitter, Github, Linkedin, Youtube, Facebook, Music, Video, Edit, Trash2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const getBackgroundStyle = (widget: any) => {
   if (!widget.background) {
@@ -39,8 +40,23 @@ export const WidgetRenderer: React.FC<WidgetRendererProps> = ({
   onEdit,
   onDelete
 }) => {
-  const baseCardClasses = "transition-all duration-300 hover:shadow-md overflow-hidden rounded-xl";
+  const baseCardClasses = "h-full transition-all duration-300 hover:shadow-lg overflow-hidden rounded-xl border-0";
   const backgroundStyle = getBackgroundStyle(widget);
+
+  const renderEditButtons = () => {
+    if (!onEdit || !onDelete) return null;
+    
+    return (
+      <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+        <Button variant="outline" size="icon" onClick={() => onEdit(widget)} className="bg-white/90 hover:bg-white">
+          <Edit className="h-4 w-4" />
+        </Button>
+        <Button variant="outline" size="icon" onClick={() => onDelete(widget.id)} className="bg-white/90 hover:bg-white">
+          <Trash2 className="h-4 w-4" />
+        </Button>
+      </div>
+    );
+  };
 
   const renderWidgetContent = () => {
     switch (widget.type) {
@@ -67,9 +83,7 @@ export const WidgetRenderer: React.FC<WidgetRendererProps> = ({
     if (isPreview) {
       return (
         <Card className="group relative" style={backgroundStyle}>
-          <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-            {renderEditButtons()}
-          </div>
+          {renderEditButtons()}
           <div className="p-4">
             <h3 className="font-medium text-lg mb-2">{widget.title}</h3>
             <div className="flex items-center">
@@ -87,9 +101,9 @@ export const WidgetRenderer: React.FC<WidgetRendererProps> = ({
         href={widget.content.url} 
         target="_blank" 
         rel="noopener noreferrer"
-        className={`${baseCardClasses} group hover:scale-[1.01]`}
+        className="group hover:scale-[1.01]"
       >
-        <Card className="h-full border-0 overflow-hidden" style={backgroundStyle}>
+        <Card className={baseCardClasses} style={backgroundStyle}>
           <div className="p-4 h-full flex flex-col justify-between relative z-10">
             <h3 className="font-medium text-lg mb-2">{widget.title}</h3>
             <div className="flex items-center mt-2">
@@ -108,9 +122,7 @@ export const WidgetRenderer: React.FC<WidgetRendererProps> = ({
     if (isPreview) {
       return (
         <Card className="group relative" style={backgroundStyle}>
-          <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-            {renderEditButtons()}
-          </div>
+          {renderEditButtons()}
           <div className="p-4">
             <h3 className="font-medium text-lg mb-2">{widget.title}</h3>
             <div className="flex items-center">
@@ -127,9 +139,9 @@ export const WidgetRenderer: React.FC<WidgetRendererProps> = ({
         href={widget.content.url} 
         target="_blank" 
         rel="noopener noreferrer"
-        className={`${baseCardClasses} group hover:scale-[1.01]`}
+        className="group hover:scale-[1.01]"
       >
-        <Card className="h-full border-0 overflow-hidden" style={backgroundStyle}>
+        <Card className={baseCardClasses} style={backgroundStyle}>
           <div className="p-4 h-full flex flex-col relative z-10">
             <div className="flex items-center mb-3">
               <div className="h-10 w-10 bg-white rounded-full flex items-center justify-center mr-3 shadow-sm">
@@ -162,9 +174,7 @@ export const WidgetRenderer: React.FC<WidgetRendererProps> = ({
     if (isPreview) {
       return (
         <Card className="group relative" style={backgroundStyle}>
-          <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-            {renderEditButtons()}
-          </div>
+          {renderEditButtons()}
           <div className="p-4">
             <h3 className="font-medium text-lg mb-2">{widget.title}</h3>
             <p>{widget.content.text}</p>
@@ -174,7 +184,7 @@ export const WidgetRenderer: React.FC<WidgetRendererProps> = ({
     }
 
     return (
-      <Card className={`${baseCardClasses} border-0 overflow-hidden`} style={backgroundStyle}>
+      <Card className={baseCardClasses} style={backgroundStyle}>
         <div className="p-4 relative z-10">
           <h3 className="font-medium text-lg mb-2">{widget.title}</h3>
           <p className="text-sm text-gray-700">{widget.content.text}</p>
@@ -187,9 +197,7 @@ export const WidgetRenderer: React.FC<WidgetRendererProps> = ({
     if (isPreview) {
       return (
         <Card className="group relative">
-          <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
-            {renderEditButtons()}
-          </div>
+          {renderEditButtons()}
           <div className="p-4">
             <h3 className="font-medium text-lg mb-2">{widget.title}</h3>
             <div className="aspect-video rounded-md overflow-hidden">
@@ -205,7 +213,7 @@ export const WidgetRenderer: React.FC<WidgetRendererProps> = ({
     }
 
     return (
-      <Card className={`${baseCardClasses} group border-0 overflow-hidden`}>
+      <Card className={cn(baseCardClasses, "group")}>
         <AspectRatio ratio={16/9}>
           <img 
             src={widget.content.images[0]} 
@@ -224,9 +232,7 @@ export const WidgetRenderer: React.FC<WidgetRendererProps> = ({
     if (isPreview) {
       return (
         <Card className="group relative" style={backgroundStyle}>
-          <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-            {renderEditButtons()}
-          </div>
+          {renderEditButtons()}
           <div className="p-4">
             <h3 className="font-medium text-lg mb-2">{widget.title}</h3>
             <div className="bg-gray-100 rounded-md p-4 text-center">
@@ -239,7 +245,7 @@ export const WidgetRenderer: React.FC<WidgetRendererProps> = ({
     }
 
     return (
-      <Card className={`${baseCardClasses} border-0 overflow-hidden`} style={backgroundStyle}>
+      <Card className={baseCardClasses} style={backgroundStyle}>
         <div className="p-4 relative z-10">
           <h3 className="font-medium text-lg mb-2">{widget.title}</h3>
           <div className="bg-white bg-opacity-70 rounded-md p-3 text-center">
@@ -255,9 +261,7 @@ export const WidgetRenderer: React.FC<WidgetRendererProps> = ({
     if (isPreview) {
       return (
         <Card className="group relative" style={backgroundStyle}>
-          <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
-            {renderEditButtons()}
-          </div>
+          {renderEditButtons()}
           <div className="p-4">
             <h3 className="font-medium text-lg flex items-center">
               <Music className="h-4 w-4 mr-2" />
@@ -278,7 +282,7 @@ export const WidgetRenderer: React.FC<WidgetRendererProps> = ({
     }
 
     return (
-      <Card className={`${baseCardClasses} border-0 overflow-hidden`} style={backgroundStyle}>
+      <Card className={baseCardClasses} style={backgroundStyle}>
         <div className="p-4 relative z-10">
           <div className="flex items-center mb-3">
             <div className="h-10 w-10 bg-green-500 rounded-full flex items-center justify-center mr-3 shadow-sm">
@@ -305,9 +309,7 @@ export const WidgetRenderer: React.FC<WidgetRendererProps> = ({
     if (isPreview) {
       return (
         <Card className="group relative" style={backgroundStyle}>
-          <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
-            {renderEditButtons()}
-          </div>
+          {renderEditButtons()}
           <div className="p-4">
             <h3 className="font-medium text-lg flex items-center">
               <Video className="h-4 w-4 mr-2" />
@@ -329,7 +331,7 @@ export const WidgetRenderer: React.FC<WidgetRendererProps> = ({
     }
 
     return (
-      <Card className={`${baseCardClasses} border-0 overflow-hidden`} style={backgroundStyle}>
+      <Card className={baseCardClasses} style={backgroundStyle}>
         <div className="p-4 relative z-10">
           <div className="flex items-center mb-3">
             <div className="h-10 w-10 bg-red-500 rounded-full flex items-center justify-center mr-3 shadow-sm">
@@ -352,21 +354,6 @@ export const WidgetRenderer: React.FC<WidgetRendererProps> = ({
           </div>
         </div>
       </Card>
-    );
-  };
-
-  const renderEditButtons = () => {
-    if (!onEdit || !onDelete) return null;
-    
-    return (
-      <>
-        <Button variant="outline" size="icon" onClick={() => onEdit(widget)}>
-          <Edit className="h-4 w-4" />
-        </Button>
-        <Button variant="outline" size="icon" onClick={() => onDelete(widget.id)}>
-          <Trash2 className="h-4 w-4" />
-        </Button>
-      </>
     );
   };
 

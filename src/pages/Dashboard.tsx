@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useProfile } from "@/context/ProfileContext";
@@ -53,7 +52,7 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white border-b">
-        <div className="container max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="container max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center space-x-2">
             <div className="h-8 w-8 rounded-lg bg-bento-purple flex items-center justify-center text-white font-bold">B</div>
             <span className="font-bold text-xl">Bento Clone</span>
@@ -67,7 +66,7 @@ const Dashboard = () => {
         </div>
       </header>
 
-      <main className="container max-w-6xl mx-auto px-4 py-8">
+      <main className="container max-w-7xl mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           <div className="w-full lg:w-1/3">
             <ProfileCard 
@@ -103,10 +102,10 @@ const Dashboard = () => {
               </div>
               
               <TabsContent value="preview" className="mt-0">
-                <div className="bg-white p-6 rounded-xl shadow-sm">
-                  <div className="max-w-xl mx-auto">
-                    <div className="flex flex-col items-center mb-8">
-                      <div className="w-24 h-24 rounded-full overflow-hidden mb-4 bg-white">
+                <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+                  <div className="max-w-5xl mx-auto">
+                    <div className="flex flex-col items-center py-12">
+                      <div className="w-24 h-24 rounded-full overflow-hidden mb-4 bg-white shadow-md">
                         <img
                           src={profile.avatarUrl || `https://ui-avatars.com/api/?name=${profile.displayName.replace(" ", "+")}&background=random`}
                           alt={profile.displayName}
@@ -115,13 +114,13 @@ const Dashboard = () => {
                       </div>
                       <h1 className="text-2xl font-bold mb-1">{profile.displayName}</h1>
                       <p className="text-gray-600 mb-2">@{profile.username}</p>
-                      <p className="text-center max-w-md">{profile.bio}</p>
+                      <p className="text-center max-w-md text-gray-600">{profile.bio}</p>
                     </div>
                     
-                    <div className="flex justify-end mb-4">
+                    <div className="flex justify-end mb-4 px-4">
                       <div className="flex items-center">
                         <MoveVertical className="h-4 w-4 mr-2 text-gray-500" />
-                        <span className="text-sm text-gray-500 mr-2">Arrange Layout:</span>
+                        <span className="text-sm text-gray-500 mr-2">Edit Mode:</span>
                         <Switch
                           checked={isDraggingEnabled}
                           onCheckedChange={setIsDraggingEnabled}
@@ -135,6 +134,7 @@ const Dashboard = () => {
                       onEdit={setEditingWidget}
                       onDelete={deleteWidget}
                       onReorder={handleWidgetReorder}
+                      onResize={handleWidgetResize}
                       isEditing={isDraggingEnabled}
                     />
                   </div>

@@ -1,5 +1,6 @@
 
-export type WidgetType = 'link' | 'social' | 'text' | 'image' | 'map';
+export type WidgetType = 'link' | 'social' | 'text' | 'image' | 'map' | 'spotify' | 'youtube' | 'custom';
+export type BackgroundType = 'color' | 'gradient' | 'image' | 'none';
 
 export interface Widget {
   id: string;
@@ -9,9 +10,14 @@ export interface Widget {
   gridSpan?: 1 | 2;
   rowSpan?: 1 | 2;
   background?: {
-    type: 'color' | 'gradient' | 'image';
+    type: BackgroundType;
     value: string;
   };
+  position?: number;
+  width?: number;
+  height?: number;
+  x?: number;
+  y?: number;
 }
 
 export interface LinkWidget extends Widget {
@@ -57,6 +63,24 @@ export interface MapWidget extends Widget {
   };
 }
 
+export interface SpotifyWidget extends Widget {
+  type: 'spotify';
+  content: {
+    trackId: string;
+    embedUrl: string;
+    url: string;
+  };
+}
+
+export interface YouTubeWidget extends Widget {
+  type: 'youtube';
+  content: {
+    videoId: string;
+    embedUrl: string;
+    url: string;
+  };
+}
+
 export interface UserProfile {
   id: string;
   username: string;
@@ -64,6 +88,14 @@ export interface UserProfile {
   bio: string;
   avatarUrl: string;
   widgets: Widget[];
+  theme?: {
+    background?: {
+      type: BackgroundType;
+      value: string;
+    };
+    fontFamily?: string;
+    accentColor?: string;
+  };
 }
 
 // Re-export from our Supabase custom types

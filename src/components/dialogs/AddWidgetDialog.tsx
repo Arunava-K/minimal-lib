@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import { Widget, WidgetType } from "@/types";
+import { Widget, WidgetType, BackgroundType } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 import WidgetForm, { WidgetFormData } from "@/components/forms/WidgetForm";
 import { extractSpotifyId, extractYoutubeId } from "@/utils/mediaHelpers";
@@ -45,17 +45,17 @@ const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ onAddWidget }) => {
   const getWidgetBackground = () => {
     if (newWidgetData.backgroundType === 'color') {
       return {
-        type: 'color',
+        type: 'color' as BackgroundType,
         value: newWidgetData.backgroundColor
       };
     } else if (newWidgetData.backgroundType === 'gradient') {
       return {
-        type: 'gradient',
+        type: 'gradient' as BackgroundType,
         value: newWidgetData.backgroundGradient
       };
     } else if (newWidgetData.backgroundType === 'image') {
       return {
-        type: 'image',
+        type: 'image' as BackgroundType,
         value: newWidgetData.backgroundImage
       };
     }
@@ -124,7 +124,7 @@ const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ onAddWidget }) => {
       case "spotify":
         const spotifyId = extractSpotifyId(newWidgetData.spotifyUrl);
         widget = {
-          type: "spotify",
+          type: "spotify" as WidgetType,
           title: newWidgetData.title || "Spotify Track",
           content: {
             trackId: spotifyId,
@@ -137,7 +137,7 @@ const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ onAddWidget }) => {
       case "youtube":
         const youtubeId = extractYoutubeId(newWidgetData.youtubeUrl);
         widget = {
-          type: "youtube",
+          type: "youtube" as WidgetType,
           title: newWidgetData.title || "YouTube Video",
           content: {
             videoId: youtubeId,

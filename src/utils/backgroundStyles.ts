@@ -6,19 +6,36 @@ export const getBackgroundStyle = (item: {
     type: BackgroundType; 
     value: string; 
   } 
+} | { 
+  theme?: { 
+    background?: { 
+      type: BackgroundType; 
+      value: string; 
+    } 
+  } 
 }) => {
-  if (!item.background) {
-    return {};
+  // Handle profiles with theme property
+  if ('theme' in item && item.theme?.background) {
+    return getBackgroundFromType(item.theme.background.type, item.theme.background.value);
   }
+  
+  // Handle widgets with direct background property
+  if ('background' in item && item.background) {
+    return getBackgroundFromType(item.background.type, item.background.value);
+  }
+  
+  return {};
+};
 
-  switch (item.background.type) {
+const getBackgroundFromType = (type: BackgroundType, value: string) => {
+  switch (type) {
     case 'color':
-      return { backgroundColor: item.background.value };
+      return { backgroundColor: value };
     case 'gradient':
-      return { background: item.background.value };
+      return { background: value };
     case 'image':
       return { 
-        backgroundImage: `url(${item.background.value})`,
+        backgroundImage: `url(${value})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center'
       };

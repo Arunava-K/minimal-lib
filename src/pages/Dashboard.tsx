@@ -4,59 +4,50 @@ import { useAuth } from "@/context/AuthContext";
 import { useProfile } from "@/context/ProfileContext";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Widget, BackgroundType } from "@/types";
+import { Widget } from "@/types";
 import { Link } from "react-router-dom";
-import { Eye } from "lucide-react";
+import { Eye, MoveVertical } from "lucide-react";
 import WidgetGrid from "@/components/widgets/WidgetGrid";
 import WidgetList from "@/components/widgets/WidgetList";
 import ProfileCard from "@/components/profile/ProfileCard";
-import ProfileHeader from "@/components/profile/ProfileHeader";
-import ProfileEditForm from "@/components/forms/ProfileEditForm";
 import AddWidgetDialog from "@/components/dialogs/AddWidgetDialog";
 import EditWidgetDialog from "@/components/dialogs/EditWidgetDialog";
+import { useToast } from "@/hooks/use-toast";
+import { Switch } from "@/components/ui/switch";
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
   const { profile, updateProfile, addWidget, updateWidget, deleteWidget } = useProfile();
-  const [editingProfile, setEditingProfile] = useState(false);
   const [editingWidget, setEditingWidget] = useState<Widget | null>(null);
-  const [formData, setFormData] = useState({
-    displayName: profile?.displayName || "",
-    bio: profile?.bio || "",
-    avatarUrl: profile?.avatarUrl || "",
-    backgroundColor: profile?.theme?.background?.type === 'color' ? profile.theme.background.value : "#f5f7fa",
-    backgroundType: (profile?.theme?.background?.type || 'color') as BackgroundType,
-    backgroundGradient: profile?.theme?.background?.type === 'gradient' ? profile.theme.background.value : "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
-    backgroundImage: profile?.theme?.background?.type === 'image' ? profile.theme.background.value : "",
-  });
+  const [editingProfile, setEditingProfile] = useState(false);
+  const [isDraggingEnabled, setIsDraggingEnabled] = useState(false);
+  const { toast } = useToast();
 
   if (!profile) {
     return <div className="flex items-center justify-center min-h-screen">Loading profile...</div>;
   }
 
-  const handleProfileUpdate = () => {
-    // Set background based on type selected
-    let background = { type: formData.backgroundType, value: "" };
-    
-    if (formData.backgroundType === 'color') {
-      background.value = formData.backgroundColor;
-    } else if (formData.backgroundType === 'gradient') {
-      background.value = formData.backgroundGradient;
-    } else if (formData.backgroundType === 'image') {
-      background.value = formData.backgroundImage;
-    }
-
+  const handleWidgetReorder = (updatedWidgets: Widget[]) => {
     updateProfile({
-      displayName: formData.displayName,
-      bio: formData.bio,
-      avatarUrl: formData.avatarUrl,
-      theme: {
-        background,
-        accentColor: '#5c6ac4'
-      }
+      ...profile,
+      widgets: updatedWidgets
     });
     
-    setEditingProfile(false);
+    toast({
+      title: "Layout updated",
+      description: "Your widget layout has been saved",
+    });
+  };
+
+  const handleWidgetResize = (id: string, width: number, height: number) => {
+    const updatedWidgets = profile.widgets.map(widget => 
+      widget.id === id ? { ...widget, width, height } : widget
+    );
+    
+    updateProfile({
+      ...profile,
+      widgets: updatedWidgets
+    });
   };
 
   return (
@@ -84,14 +75,11 @@ const Dashboard = () => {
               isEditing={editingProfile}
               onEdit={() => setEditingProfile(true)}
               onCancel={() => setEditingProfile(false)}
-            >
-              <ProfileEditForm
-                formData={formData}
-                setFormData={setFormData}
-                onCancel={() => setEditingProfile(false)}
-                onSave={handleProfileUpdate}
-              />
-            </ProfileCard>
+              onUpdate={(updatedProfile) => {
+                updateProfile(updatedProfile);
+                setEditingProfile(false);
+              }}
+            />
 
             <div className="mt-8">
               <AddWidgetDialog onAddWidget={addWidget} />
@@ -117,13 +105,37 @@ const Dashboard = () => {
               <TabsContent value="preview" className="mt-0">
                 <div className="bg-white p-6 rounded-xl shadow-sm">
                   <div className="max-w-xl mx-auto">
-                    <ProfileHeader profile={profile} />
+                    <div className="flex flex-col items-center mb-8">
+                      <div className="w-24 h-24 rounded-full overflow-hidden mb-4 bg-white">
+                        <img
+                          src={profile.avatarUrl || `https://ui-avatars.com/api/?name=${profile.displayName.replace(" ", "+")}&background=random`}
+                          alt={profile.displayName}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <h1 className="text-2xl font-bold mb-1">{profile.displayName}</h1>
+                      <p className="text-gray-600 mb-2">@{profile.username}</p>
+                      <p className="text-center max-w-md">{profile.bio}</p>
+                    </div>
+                    
+                    <div className="flex justify-end mb-4">
+                      <div className="flex items-center">
+                        <MoveVertical className="h-4 w-4 mr-2 text-gray-500" />
+                        <span className="text-sm text-gray-500 mr-2">Arrange Layout:</span>
+                        <Switch
+                          checked={isDraggingEnabled}
+                          onCheckedChange={setIsDraggingEnabled}
+                        />
+                      </div>
+                    </div>
                     
                     <WidgetGrid 
                       widgets={profile.widgets} 
                       isPreview={true}
                       onEdit={setEditingWidget}
                       onDelete={deleteWidget}
+                      onReorder={handleWidgetReorder}
+                      isEditing={isDraggingEnabled}
                     />
                   </div>
                 </div>

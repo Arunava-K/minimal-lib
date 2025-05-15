@@ -151,17 +151,17 @@ const EditWidgetDialog: React.FC<EditWidgetDialogProps> = ({
   const getWidgetBackground = () => {
     if (formData.backgroundType === 'color') {
       return {
-        type: 'color',
+        type: 'color' as BackgroundType,
         value: formData.backgroundColor
       };
     } else if (formData.backgroundType === 'gradient') {
       return {
-        type: 'gradient',
+        type: 'gradient' as BackgroundType,
         value: formData.backgroundGradient
       };
     } else if (formData.backgroundType === 'image') {
       return {
-        type: 'image',
+        type: 'image' as BackgroundType,
         value: formData.backgroundImage
       };
     }

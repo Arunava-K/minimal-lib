@@ -1,10 +1,30 @@
-
 import React from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Widget, BackgroundType } from "@/types";
-import { ExternalLink, Instagram, Twitter, Github, Linkedin, Youtube, Facebook, Music, Video } from "lucide-react";
+import { ExternalLink, Instagram, Twitter, Github, Linkedin, Youtube, Facebook, Music, Video, Edit, Trash2 } from "lucide-react";
+
+const getBackgroundStyle = (widget: any) => {
+  if (!widget.background) {
+    return {};
+  }
+
+  switch (widget.background.type) {
+    case 'color':
+      return { backgroundColor: widget.background.value };
+    case 'gradient':
+      return { background: widget.background.value };
+    case 'image':
+      return { 
+        backgroundImage: `url(${widget.background.value})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center'
+      };
+    default:
+      return {};
+  }
+};
 
 interface WidgetRendererProps {
   widget: Widget;
@@ -369,31 +389,7 @@ export const WidgetRenderer: React.FC<WidgetRendererProps> = ({
     }
   };
 
-  const getBackgroundStyle = (widget: any) => {
-    if (!widget.background) {
-      return {};
-    }
-
-    switch (widget.background.type) {
-      case 'color':
-        return { backgroundColor: widget.background.value };
-      case 'gradient':
-        return { background: widget.background.value };
-      case 'image':
-        return { 
-          backgroundImage: `url(${widget.background.value})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center'
-        };
-      default:
-        return {};
-    }
-  };
-
   return renderWidgetContent();
 };
-
-// Just importing Edit for the JSX here
-import { Edit, Trash2 } from "lucide-react";
 
 export default WidgetRenderer;

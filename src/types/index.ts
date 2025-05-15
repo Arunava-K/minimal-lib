@@ -8,6 +8,10 @@ export interface Widget {
   content: any;
   gridSpan?: 1 | 2;
   rowSpan?: 1 | 2;
+  background?: {
+    type: 'color' | 'gradient' | 'image';
+    value: string;
+  };
 }
 
 export interface LinkWidget extends Widget {
@@ -26,6 +30,7 @@ export interface SocialWidget extends Widget {
     username: string;
     url: string;
     icon?: string;
+    description?: string;
   };
 }
 

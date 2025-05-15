@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback } from "react";
 import { Widget } from "@/types";
 import WidgetRenderer from "./WidgetRenderer";
@@ -7,6 +6,7 @@ import { SortableContext, arrayMove, rectSortingStrategy, useSortable } from "@d
 import { CSS } from "@dnd-kit/utilities";
 import { ResizableBox } from "react-resizable";
 import "react-resizable/css/styles.css";
+import { cn } from "@/lib/utils";
 
 interface SortableWidgetProps {
   widget: Widget;
@@ -14,6 +14,7 @@ interface SortableWidgetProps {
   onDelete?: (id: string) => void;
   isPreview?: boolean;
   isEditing: boolean;
+  onResize?: (id: string, width: number, height: number) => void;
 }
 
 const SortableWidget: React.FC<SortableWidgetProps> = ({ 
@@ -21,7 +22,8 @@ const SortableWidget: React.FC<SortableWidgetProps> = ({
   onEdit, 
   onDelete, 
   isPreview,
-  isEditing
+  isEditing,
+  onResize
 }) => {
   const {
     attributes,
@@ -42,59 +44,52 @@ const SortableWidget: React.FC<SortableWidgetProps> = ({
     zIndex: isDragging ? 1000 : 1,
   };
 
-  // Calculate column span for grid
-  const colSpan = widget.gridSpan === 2 ? "sm:col-span-2" : "";
-  
   // Default dimensions for widgets
-  const defaultWidth = 300;
-  const defaultHeight = 200;
-  
-  // Use saved dimensions or defaults
-  const width = widget.width || defaultWidth;
-  const height = widget.height || defaultHeight;
+  const defaultWidth = widget.width || 300;
+  const defaultHeight = widget.height || 200;
 
-  if (!isEditing) {
-    return (
-      <div ref={setNodeRef} style={style} className={colSpan}>
-        <WidgetRenderer 
-          widget={widget} 
-          isPreview={isPreview}
-          onEdit={onEdit}
-          onDelete={onDelete}
-        />
-      </div>
-    );
-  }
+  const handleResize = (e: any, { size }: { size: { width: number; height: number } }) => {
+    if (onResize) {
+      onResize(widget.id, size.width, size.height);
+    }
+  };
 
   return (
     <div 
       ref={setNodeRef} 
       style={style} 
-      className={`${colSpan} relative`}
+      className={cn(
+        "relative transition-all duration-300",
+        isEditing ? "hover:ring-2 ring-blue-500 ring-offset-2" : ""
+      )}
       {...attributes}
       {...listeners}
     >
-      <div className="group cursor-move">
+      <div className={cn(
+        "group relative",
+        isEditing ? "cursor-move" : ""
+      )}>
         <ResizableBox
-          width={width}
-          height={height}
-          minConstraints={[150, 100]}
-          maxConstraints={[600, 500]}
-          resizeHandles={['se']}
+          width={defaultWidth}
+          height={defaultHeight}
+          minConstraints={[200, 100]}
+          maxConstraints={[600, 600]}
+          resizeHandles={isEditing ? ['se'] : []}
+          onResize={handleResize}
           handle={
-            <div className="absolute bottom-2 right-2 w-4 h-4 bg-gray-200 rounded-sm opacity-50 group-hover:opacity-100 cursor-se-resize z-10" />
+            isEditing ? (
+              <div className="absolute bottom-2 right-2 w-4 h-4 bg-blue-500 rounded-sm opacity-50 group-hover:opacity-100 cursor-se-resize z-10" />
+            ) : undefined
           }
-          onResize={(e, data) => {
-            // This would trigger a save in a real implementation
-            console.log("Resized to:", data.size);
-          }}
         >
-          <WidgetRenderer 
-            widget={widget} 
-            isPreview={isPreview}
-            onEdit={onEdit}
-            onDelete={onDelete}
-          />
+          <div className="h-full">
+            <WidgetRenderer 
+              widget={widget} 
+              isPreview={isPreview}
+              onEdit={onEdit}
+              onDelete={onDelete}
+            />
+          </div>
         </ResizableBox>
       </div>
     </div>
@@ -107,6 +102,7 @@ interface WidgetGridProps {
   onDelete?: (id: string) => void;
   isPreview?: boolean;
   onReorder?: (widgets: Widget[]) => void;
+  onResize?: (id: string, width: number, height: number) => void;
   isEditing?: boolean;
 }
 
@@ -116,6 +112,7 @@ const WidgetGrid: React.FC<WidgetGridProps> = ({
   onDelete, 
   isPreview = false,
   onReorder,
+  onResize,
   isEditing = false
 }) => {
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -143,15 +140,8 @@ const WidgetGrid: React.FC<WidgetGridProps> = ({
       
       const newWidgets = arrayMove(widgets, oldIndex, newIndex);
       
-      // Update positions in the new array
-      const updatedWidgets = newWidgets.map((widget, index) => ({
-        ...widget,
-        position: index
-      }));
-      
-      // Call the callback to save the new order
       if (onReorder) {
-        onReorder(updatedWidgets);
+        onReorder(newWidgets);
       }
     }
   }, [widgets, onReorder]);
@@ -166,7 +156,7 @@ const WidgetGrid: React.FC<WidgetGridProps> = ({
         items={widgets.map(w => w.id)}
         strategy={rectSortingStrategy}
       >
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
           {widgets.map((widget) => (
             <SortableWidget
               key={widget.id}
@@ -175,6 +165,7 @@ const WidgetGrid: React.FC<WidgetGridProps> = ({
               onDelete={onDelete}
               isPreview={isPreview}
               isEditing={isEditing}
+              onResize={onResize}
             />
           ))}
         </div>

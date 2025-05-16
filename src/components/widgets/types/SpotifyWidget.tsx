@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Widget } from '@/types';
 import BaseWidgetCard, { BaseWidgetCardProps } from '../BaseWidgetCard';
@@ -72,7 +73,8 @@ const SpotifyWidget: React.FC<SpotifyWidgetProps> = ({ widget, isPreview, onEdit
               <Music className={cn(albumArtUrl ? "h-4 w-4" : "h-5 w-5")} />
             </div>
             <div>
-              <h3 className="font-medium group-hover/spotifywidget:text-green-600 dark:group-hover/spotifywidget:text-green-400 transition-colors truncate leading-tight",
+              <h3 
+                className="font-medium group-hover/spotifywidget:text-green-600 dark:group-hover/spotifywidget:text-green-400 transition-colors truncate leading-tight"
                 style={{ fontSize: albumArtUrl ? '0.875rem' : '1rem' }} // Smaller title if album art is present
               >
                 {title || trackName || 'Spotify Track'}

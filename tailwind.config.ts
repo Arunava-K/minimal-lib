@@ -88,11 +88,14 @@ export default {
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
-				sm: 'calc(var(--radius) - 4px)'
+				sm: 'calc(var(--radius) - 4px)',
+				'xl': '1rem',
+				'2xl': '1.5rem',
+				'3xl': '2rem',
 			},
 			boxShadow: {
-				'bento': '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
-				'bento-hover': '0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+				'bento': '0 8px 20px -1px rgba(0, 0, 0, 0.05), 0 4px 10px -1px rgba(0, 0, 0, 0.03)',
+				'bento-hover': '0 15px 25px -3px rgba(0, 0, 0, 0.08), 0 6px 12px -2px rgba(0, 0, 0, 0.05)',
 			},
 			keyframes: {
 				'accordion-down': {

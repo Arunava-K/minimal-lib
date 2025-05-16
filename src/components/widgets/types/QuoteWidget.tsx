@@ -1,13 +1,14 @@
+
 import React from 'react';
 import { Widget } from '@/types';
 import BaseWidgetCard, { BaseWidgetCardProps } from '../BaseWidgetCard';
-import { MessageSquare } from 'lucide-react'; // Or a more specific quote icon
+import { Quote } from 'lucide-react';
 
 interface QuoteWidgetProps extends Omit<BaseWidgetCardProps, 'children'> {}
 
 const QuoteWidget: React.FC<QuoteWidgetProps> = ({ widget, isPreview, onEdit, onDelete, style }) => {
   const { title, content } = widget;
-  const { text, author } = content as { text: string; author?: string }; // Type assertion for quote content
+  const { text, author } = content as { text: string; author?: string };
 
   if (isPreview) {
     return (
@@ -25,17 +26,14 @@ const QuoteWidget: React.FC<QuoteWidgetProps> = ({ widget, isPreview, onEdit, on
 
   return (
     <BaseWidgetCard widget={widget} onEdit={onEdit} onDelete={onDelete} isPreview={isPreview} style={style} className="overflow-hidden">
-      <div className="p-6 h-full flex flex-col justify-center items-center text-center bg-slate-50 dark:bg-slate-800">
-        {/* Icon can be placed here if desired */}
-        {/* <MessageSquare size={24} className="mb-3 text-slate-400 dark:text-slate-500" /> */}
-        <blockquote className="relative">
-          <p className="text-lg md:text-xl font-serif text-slate-700 dark:text-slate-300 leading-relaxed">
-            <span className='absolute -left-3 -top-1 text-4xl text-slate-300 dark:text-slate-600'>&ldquo;</span>
+      <div className="h-full flex flex-col justify-center items-center text-center">
+        <blockquote className="relative max-w-md">
+          <Quote className="h-8 w-8 absolute -top-4 -left-2 text-black/10" />
+          <p className="text-xl md:text-2xl font-display text-gray-800 leading-relaxed">
             {text}
-            <span className='absolute -right-3 -bottom-1 text-4xl text-slate-300 dark:text-slate-600'>&rdquo;</span>
           </p>
           {author && (
-            <footer className="mt-4 text-sm text-slate-500 dark:text-slate-400">
+            <footer className="mt-6 text-base text-gray-500">
               &mdash; {author}
             </footer>
           )}

@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -7,7 +8,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
 import { getBackgroundStyle } from "@/utils/backgroundStyles";
-import ProfileHeader from "@/components/profile/ProfileHeader";
 import ProfileFooter from "@/components/profile/ProfileFooter";
 import BentoGrid from "@/components/widgets/BentoGrid";
 import { motion } from "framer-motion";
@@ -108,11 +108,11 @@ const ProfileView = () => {
               position: widget.position,
               // Since width and height properties don't exist in the database schema,
               // we provide default values
-              width: 300,
-              height: 200
+              width: widget.width || 300,
+              height: widget.height || 200
             })) || [],
             // Theme doesn't exist in the profiles table, so we provide a default theme
-            theme: {
+            theme: profileData.theme || {
               background: { type: 'color', value: '#f5f7fa' },
               accentColor: '#5c6ac4'
             }
@@ -134,7 +134,14 @@ const ProfileView = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500">Loading profile...</p>
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="flex flex-col items-center justify-center"
+        >
+          <div className="animate-spin h-10 w-10 border-4 border-bento-purple border-t-transparent rounded-full mb-4"></div>
+          <p className="text-gray-500">Loading profile...</p>
+        </motion.div>
       </div>
     );
   }
@@ -154,7 +161,7 @@ const ProfileView = () => {
   return (
     <div className="min-h-screen relative">
       {/* Fixed Header */}
-      <header className="sticky top-0 z-10 bg-white/80 backdrop-blur-sm border-b shadow-sm">
+      <header className="sticky top-0 z-10 bg-white/80 backdrop-blur-sm shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           {isPreview && (
             <Link to="/dashboard">
@@ -192,18 +199,23 @@ const ProfileView = () => {
         </div>
       </header>
       
-      {/* Hero Section */}
+      {/* Hero Section with Profile Info */}
       <motion.section 
-        className="py-16 px-4 text-center"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
+        className="relative overflow-hidden py-20 px-4 text-center"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
         style={getBackgroundStyle(profile)}
       >
         <div className="max-w-4xl mx-auto">
-          <div className="mb-8">
+          <motion.div 
+            className="mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
             <motion.div 
-              className="h-24 w-24 md:h-32 md:w-32 rounded-full overflow-hidden border-4 border-white shadow-xl mx-auto"
+              className="h-32 w-32 md:h-40 md:w-40 rounded-full overflow-hidden border-4 border-white shadow-xl mx-auto"
               whileHover={{ scale: 1.05 }}
               transition={{ type: "spring", stiffness: 300 }}
             >
@@ -214,37 +226,37 @@ const ProfileView = () => {
               />
             </motion.div>
             <motion.h1 
-              className="text-3xl md:text-4xl font-bold mt-4 mb-1"
+              className="text-4xl md:text-5xl font-bold mt-6 mb-2"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.4 }}
+              transition={{ delay: 0.3, duration: 0.4 }}
             >
               {profile.displayName}
             </motion.h1>
             <motion.p 
-              className="text-lg text-gray-600 mb-2"
+              className="text-xl text-gray-600 mb-2"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.3, duration: 0.4 }}
+              transition={{ delay: 0.4, duration: 0.4 }}
             >
               @{profile.username}
             </motion.p>
             {profile.bio && (
               <motion.p 
-                className="text-gray-600 max-w-lg mx-auto mt-4 text-lg"
+                className="text-gray-600 max-w-lg mx-auto mt-4 text-lg leading-relaxed"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 0.4, duration: 0.5 }}
+                transition={{ delay: 0.5, duration: 0.5 }}
               >
                 {profile.bio}
               </motion.p>
             )}
-          </div>
+          </motion.div>
         </div>
       </motion.section>
       
       {/* Bento Grid Section */}
-      <section className="px-4 pb-20">
+      <section className="px-4 py-12 md:py-16 pb-20">
         <div className="max-w-7xl mx-auto">
           <BentoGrid 
             widgets={profile.widgets.sort((a, b) => {

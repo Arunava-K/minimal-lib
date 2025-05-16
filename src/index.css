@@ -91,15 +91,62 @@
 
   body {
     @apply bg-background text-foreground;
+    font-feature-settings: "ss01", "ss02", "cv01", "cv02", "cv03";
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply tracking-tight;
   }
 }
 
 @layer components {
   .bento-card {
-    @apply bg-white rounded-2xl shadow-bento p-4 transition-all duration-300 hover:shadow-md;
+    @apply bg-white rounded-2xl shadow-bento p-6 transition-all duration-300 hover:shadow-bento-hover;
   }
   
   .bento-avatar {
     @apply rounded-full overflow-hidden border-4 border-white shadow-bento;
   }
+  
+  .masonry-grid {
+    column-gap: 1.5rem;
+    column-fill: balance;
+  }
+  
+  .break-inside-avoid {
+    break-inside: avoid;
+  }
+}
+
+/* Pastel Background Utilities */
+.bg-bento-pastel-red {
+  background-color: theme('colors.bento.pastel.red');
+}
+
+.bg-bento-pastel-green {
+  background-color: theme('colors.bento.pastel.green');
+}
+
+.bg-bento-pastel-blue {
+  background-color: theme('colors.bento.pastel.blue');
+}
+
+.bg-bento-pastel-purple {
+  background-color: theme('colors.bento.pastel.purple');
+}
+
+.bg-bento-pastel-yellow {
+  background-color: theme('colors.bento.pastel.yellow');
+}
+
+.bg-bento-pastel-pink {
+  background-color: theme('colors.bento.pastel.pink');
+}
+
+.bg-bento-pastel-orange {
+  background-color: theme('colors.bento.pastel.orange');
+}
+
+.bg-bento-pastel-cyan {
+  background-color: theme('colors.bento.pastel.cyan');
 }

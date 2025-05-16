@@ -50,48 +50,38 @@ const BentoGrid: React.FC<BentoGridProps> = ({
 
   return (
     <motion.div
-      className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 auto-rows-max"
+      className="w-full masonry-grid gap-6 columns-1 sm:columns-2 lg:columns-3 xl:columns-4"
       variants={containerVariants}
       initial="hidden"
       animate="show"
     >
-      {widgets.map((widget) => {
-        // Determine column span based on gridSpan property
-        const colSpanClass = widget.gridSpan === 2 
-          ? "sm:col-span-2" 
-          : "col-span-1";
-          
-        // Determine height based on rowSpan property
-        const heightClass = widget.rowSpan === 2 
-          ? "row-span-2" 
-          : "row-span-1";
-        
-        return (
-          <motion.div
-            key={widget.id}
-            className={cn(
-              colSpanClass,
-              heightClass,
-              "transform transition-all duration-300 hover:z-10"
-            )}
-            variants={itemVariants}
-            whileHover={{ 
-              scale: 1.02,
-              boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
+      {widgets.map((widget) => (
+        <motion.div
+          key={widget.id}
+          className="break-inside-avoid mb-6"
+          variants={itemVariants}
+          whileHover={{ 
+            scale: 1.02,
+            boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
+          }}
+          layout
+        >
+          <div 
+            className="overflow-hidden rounded-2xl h-full" 
+            style={{
+              width: "100%",
+              height: widget.height || (widget.rowSpan === 2 ? 400 : 200),
             }}
-            layout
           >
-            <div className="h-full rounded-2xl overflow-hidden">
-              <WidgetRenderer
-                widget={widget}
-                isPreview={isPreview}
-                onEdit={onEdit}
-                onDelete={onDelete}
-              />
-            </div>
-          </motion.div>
-        );
-      })}
+            <WidgetRenderer
+              widget={widget}
+              isPreview={isPreview}
+              onEdit={onEdit}
+              onDelete={onDelete}
+            />
+          </div>
+        </motion.div>
+      ))}
     </motion.div>
   );
 };

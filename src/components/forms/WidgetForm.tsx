@@ -21,6 +21,7 @@ export interface WidgetFormData {
   locationDescription: string;
   spotifyUrl: string;
   youtubeUrl: string;
+  instagramUrl: string;
   backgroundType: BackgroundType;
   backgroundColor: string;
   backgroundGradient: string;
@@ -64,6 +65,8 @@ const WidgetForm: React.FC<WidgetFormProps> = ({
         return renderSpotifyFields();
       case "youtube":
         return renderYoutubeFields();
+      case "instagram":
+        return renderInstagramFields();
       default:
         return null;
     }
@@ -261,6 +264,35 @@ const WidgetForm: React.FC<WidgetFormProps> = ({
       </div>
       <div className="col-span-4 pl-[25%]">
         <p className="text-xs text-gray-500">Paste the URL of a Spotify track</p>
+      </div>
+    </>
+  );
+
+  const renderInstagramFields = () => (
+    <>
+      <div className="grid grid-cols-4 items-center gap-4">
+        <Label htmlFor="title" className="text-right">
+          Title
+        </Label>
+        <Input
+          id="title"
+          className="col-span-3"
+          placeholder="My Instagram Post"
+          value={formData.title}
+          onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+        />
+      </div>
+      <div className="grid grid-cols-4 items-center gap-4">
+        <Label htmlFor="instagram-url" className="text-right">
+          Instagram URL
+        </Label>
+        <Input
+          id="instagram-url"
+          className="col-span-3"
+          placeholder="https://www.instagram.com/p/yourpostid"
+          value={formData.instagramUrl}
+          onChange={(e) => setFormData({ ...formData, instagramUrl: e.target.value })}
+        />
       </div>
     </>
   );

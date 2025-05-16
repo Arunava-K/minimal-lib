@@ -9,15 +9,15 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Widget, WidgetType, BackgroundType } from "@/types";
+import { Widget, WidgetType, BackgroundType, AnyWidget } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 import WidgetForm, { WidgetFormData } from "@/components/forms/WidgetForm";
 import { extractSpotifyId, extractYoutubeId } from "@/utils/mediaHelpers";
 
 interface EditWidgetDialogProps {
-  widget: Widget | null;
+  widget: AnyWidget | null;
   onClose: () => void;
-  onUpdateWidget: (id: string, updates: Partial<Widget>) => void;
+  onUpdateWidget: (id: string, updates: Partial<AnyWidget>) => void;
 }
 
 const EditWidgetDialog: React.FC<EditWidgetDialogProps> = ({ 
@@ -38,6 +38,7 @@ const EditWidgetDialog: React.FC<EditWidgetDialogProps> = ({
     locationDescription: "",
     spotifyUrl: "",
     youtubeUrl: "",
+    instagramUrl: "",
     backgroundType: 'gradient',
     backgroundColor: "#ffffff",
     backgroundGradient: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
@@ -144,6 +145,17 @@ const EditWidgetDialog: React.FC<EditWidgetDialogProps> = ({
             backgroundImage
           });
           break;
+        case "instagram":
+          setFormData({
+            ...formData,
+            title: widget.title,
+            instagramUrl: widget.content.url || "",
+            backgroundType,
+            backgroundColor,
+            backgroundGradient,
+            backgroundImage
+          });
+          break;
       }
     }
   }, [widget]);
@@ -171,7 +183,7 @@ const EditWidgetDialog: React.FC<EditWidgetDialogProps> = ({
   const handleUpdateWidget = () => {
     if (!widget) return;
 
-    let updates: Partial<Widget> = {
+    let updates: Partial<AnyWidget> = {
       title: formData.title,
     };
 
@@ -231,6 +243,7 @@ const EditWidgetDialog: React.FC<EditWidgetDialogProps> = ({
             trackId: spotifyId,
             embedUrl: `https://open.spotify.com/embed/track/${spotifyId}`,
             url: formData.spotifyUrl
+            // TODO: Add fields like trackName, artistName, albumArtUrl here if fetched/available
           },
         };
         break;
@@ -242,6 +255,16 @@ const EditWidgetDialog: React.FC<EditWidgetDialogProps> = ({
             videoId: youtubeId,
             embedUrl: `https://www.youtube.com/embed/${youtubeId}`,
             url: formData.youtubeUrl
+            // TODO: Add fields like thumbnailUrl, channelName, viewCount here if fetched/available
+          },
+        };
+        break;
+      case "instagram":
+        updates = {
+          ...updates,
+          content: {
+            url: formData.instagramUrl
+            // TODO: Add fields like username, profilePicUrl here if fetched/available
           },
         };
         break;

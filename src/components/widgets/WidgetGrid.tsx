@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { Widget } from "@/types";
 import WidgetRenderer from "./WidgetRenderer";
 import { DndContext, DragEndEvent, DragStartEvent, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
@@ -7,6 +7,28 @@ import { CSS } from "@dnd-kit/utilities";
 import { ResizableBox } from "react-resizable";
 import "react-resizable/css/styles.css";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion"; // Added Framer Motion import
+
+const PRESET_SIZES = [
+  { width: 200, height: 200 },
+  { width: 400, height: 400 },
+  { width: 200, height: 400 },
+  { width: 400, height: 200 },
+];
+
+const snapToClosestPreset = (currentWidth: number, currentHeight: number) => {
+  let closest = PRESET_SIZES[0];
+  let minDiff = Infinity;
+
+  for (const preset of PRESET_SIZES) {
+    const diff = Math.abs(preset.width - currentWidth) + Math.abs(preset.height - currentHeight);
+    if (diff < minDiff) {
+      minDiff = diff;
+      closest = preset;
+    }
+  }
+  return closest;
+};
 
 interface SortableWidgetProps {
   widget: Widget;
@@ -25,6 +47,21 @@ const SortableWidget: React.FC<SortableWidgetProps> = ({
   isEditing,
   onResize
 }) => {
+  const [localSize, setLocalSize] = useState({
+    width: widget.width || PRESET_SIZES[0].width,
+    height: widget.height || PRESET_SIZES[0].height
+  });
+
+  // Sync localSize with widget props if they change from parent
+  useEffect(() => {
+    const newWidth = widget.width || PRESET_SIZES[0].width;
+    const newHeight = widget.height || PRESET_SIZES[0].height;
+    // Only update if there's an actual change to avoid potential loops or unnecessary renders
+    if (localSize.width !== newWidth || localSize.height !== newHeight) {
+      setLocalSize({ width: newWidth, height: newHeight });
+    }
+  }, [widget.width, widget.height]); // Dependencies: only props that drive this state from outside
+
   const {
     attributes,
     listeners,
@@ -42,57 +79,63 @@ const SortableWidget: React.FC<SortableWidgetProps> = ({
     transition,
     opacity: isDragging ? 0.5 : 1,
     zIndex: isDragging ? 1000 : 1,
+    width: localSize.width,
+    height: localSize.height,
   };
 
-  // Default dimensions for widgets
-  const defaultWidth = widget.width || 300;
-  const defaultHeight = widget.height || 200;
-
-  const handleResize = (e: any, { size }: { size: { width: number; height: number } }) => {
-    if (onResize) {
-      onResize(widget.id, size.width, size.height);
-    }
-  };
+  // Removed defaultWidth, defaultHeight, and original handleResize
 
   return (
-    <div 
+    <motion.div
+      layout
       ref={setNodeRef} 
       style={style} 
       className={cn(
-        "relative transition-all duration-300",
+        "relative",
         isEditing ? "hover:ring-2 ring-blue-500 ring-offset-2" : ""
       )}
       {...attributes}
       {...listeners}
+      transition={{ duration: 0.2, ease: "easeOut" }}
     >
-      <div className={cn(
-        "group relative",
-        isEditing ? "cursor-move" : ""
-      )}>
+      <motion.div 
+        className={cn(
+          "group relative",
+          isEditing ? "cursor-move" : ""
+        )}
+        // Removed layout and transition from this inner motion.div
+      >
         <ResizableBox
-          width={defaultWidth}
-          height={defaultHeight}
-          minConstraints={[200, 100]}
-          maxConstraints={[600, 600]}
-          resizeHandles={isEditing ? ['se'] : []}
-          onResize={handleResize}
-          handle={
-            isEditing ? (
-              <div className="absolute bottom-2 right-2 w-4 h-4 bg-blue-500 rounded-sm opacity-50 group-hover:opacity-100 cursor-se-resize z-10" />
-            ) : undefined
-          }
+          width={localSize.width}
+          height={localSize.height}
+          minConstraints={[200, 200]} // Min of presets
+          maxConstraints={[400, 400]} // Max of presets
+          resizeHandles={isEditing ? ['se'] : []} // Standard bottom-right handle
+          onResize={(e, { size }) => {
+            setLocalSize(size);
+          }}
+          onResizeStop={(e, { size }) => {
+            if (onResize) {
+              const snappedSize = snapToClosestPreset(size.width, size.height);
+              setLocalSize(snappedSize);
+              onResize(widget.id, snappedSize.width, snappedSize.height);
+            }
+          }}
         >
-          <div className="h-full">
+          <motion.div 
+            className="h-full overflow-hidden"
+            // Removed layout and transition from this inner motion.div
+          >
             <WidgetRenderer 
               widget={widget} 
               isPreview={isPreview}
               onEdit={onEdit}
               onDelete={onDelete}
             />
-          </div>
+          </motion.div>
         </ResizableBox>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 
@@ -156,7 +199,11 @@ const WidgetGrid: React.FC<WidgetGridProps> = ({
         items={widgets.map(w => w.id)}
         strategy={rectSortingStrategy}
       >
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+        <motion.div 
+          layout
+          className="flex flex-wrap gap-6 p-6 max-w-[800px] mx-auto" // Added max-width and centering
+          transition={{ duration: 0.3, ease: "easeInOut" }}
+        >
           {widgets.map((widget) => (
             <SortableWidget
               key={widget.id}
@@ -168,7 +215,7 @@ const WidgetGrid: React.FC<WidgetGridProps> = ({
               onResize={onResize}
             />
           ))}
-        </div>
+        </motion.div>
       </SortableContext>
     </DndContext>
   );

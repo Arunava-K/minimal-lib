@@ -1,12 +1,12 @@
 
-export type WidgetType = 'link' | 'social' | 'text' | 'image' | 'map' | 'spotify' | 'youtube' | 'custom';
+export type WidgetType = 'link' | 'social' | 'text' | 'image' | 'map' | 'spotify' | 'youtube' | 'instagram' | 'custom';
 export type BackgroundType = 'color' | 'gradient' | 'image' | 'none';
 
 export interface Widget {
   id: string;
   type: WidgetType;
   title: string;
-  content: any;
+  content: unknown;
   gridSpan?: 1 | 2;
   rowSpan?: 1 | 2;
   background?: {
@@ -69,6 +69,9 @@ export interface SpotifyWidget extends Widget {
     trackId: string;
     embedUrl: string;
     url: string;
+    trackName?: string;
+    artistName?: string;
+    albumArtUrl?: string;
   };
 }
 
@@ -78,6 +81,20 @@ export interface YouTubeWidget extends Widget {
     videoId: string;
     embedUrl: string;
     url: string;
+    thumbnailUrl?: string;
+    channelName?: string;
+    viewCount?: string | number;
+  };
+}
+
+export interface InstagramWidget extends Widget {
+  type: 'instagram';
+  content: {
+    url: string;
+    username?: string;
+    profilePicUrl?: string;
+    postCount?: string | number;
+    followerCount?: string | number;
   };
 }
 
@@ -97,6 +114,29 @@ export interface UserProfile {
     accentColor?: string;
   };
 }
+
+// Placeholder for CustomWidget content, adjust as needed
+export interface CustomWidgetContent {
+  data: Record<string, any>; // Example: a generic data object
+  componentType?: string; // Example: identifier for a custom component
+}
+
+export interface CustomWidget extends Widget {
+  type: 'custom';
+  content: CustomWidgetContent;
+}
+
+// Union of all specific widget types
+export type AnyWidget =
+  | LinkWidget
+  | SocialWidget
+  | TextWidget
+  | ImageWidget
+  | MapWidget
+  | SpotifyWidget
+  | YouTubeWidget
+  | InstagramWidget
+  | CustomWidget;
 
 // Re-export from our Supabase custom types
 export * from './supabase';

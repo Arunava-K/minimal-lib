@@ -11,13 +11,13 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import { Widget, WidgetType, BackgroundType } from "@/types";
+import { Widget, WidgetType, BackgroundType, AnyWidget } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 import WidgetForm, { WidgetFormData } from "@/components/forms/WidgetForm";
 import { extractSpotifyId, extractYoutubeId } from "@/utils/mediaHelpers";
 
 interface AddWidgetDialogProps {
-  onAddWidget: (widget: Omit<Widget, "id">) => void;
+  onAddWidget: (widget: Omit<AnyWidget, "id">) => void;
 }
 
 const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ onAddWidget }) => {
@@ -36,6 +36,7 @@ const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ onAddWidget }) => {
     locationDescription: "",
     spotifyUrl: "",
     youtubeUrl: "",
+    instagramUrl: "",
     backgroundType: 'gradient',
     backgroundColor: "#ffffff",
     backgroundGradient: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
@@ -63,7 +64,7 @@ const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ onAddWidget }) => {
   };
 
   const handleAddWidget = () => {
-    let widget: Omit<Widget, "id">;
+    let widget: Omit<AnyWidget, "id">;
     const background = getWidgetBackground();
 
     switch (newWidgetType) {
@@ -130,6 +131,7 @@ const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ onAddWidget }) => {
             trackId: spotifyId,
             embedUrl: `https://open.spotify.com/embed/track/${spotifyId}`,
             url: newWidgetData.spotifyUrl
+            // TODO: Add fields like trackName, artistName, albumArtUrl here if fetched
           },
           background
         };
@@ -143,6 +145,18 @@ const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ onAddWidget }) => {
             videoId: youtubeId,
             embedUrl: `https://www.youtube.com/embed/${youtubeId}`,
             url: newWidgetData.youtubeUrl
+            // TODO: Add fields like thumbnailUrl, channelName, viewCount here if fetched
+          },
+          background
+        };
+        break;
+      case "instagram":
+        widget = {
+          type: "instagram" as WidgetType,
+          title: newWidgetData.title || "Instagram Post",
+          content: {
+            url: newWidgetData.instagramUrl
+            // TODO: Add fields like username, profilePicUrl here if fetched
           },
           background
         };
@@ -167,6 +181,7 @@ const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ onAddWidget }) => {
       locationDescription: "",
       spotifyUrl: "",
       youtubeUrl: "",
+      instagramUrl: "",
       backgroundType: 'gradient',
       backgroundColor: "#ffffff",
       backgroundGradient: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",

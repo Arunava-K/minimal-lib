@@ -24,6 +24,13 @@ const defaultWidgets: Widget[] = [
     content: {
       text: "Hello! I'm a designer passionate about creating beautiful interfaces."
     },
+    gridSpan: 1,
+    rowSpan: 1,
+    background: { 
+      type: 'gradient', 
+      value: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)' 
+    },
+    position: 0,
     width: 300,
     height: 200
   },
@@ -37,6 +44,13 @@ const defaultWidgets: Widget[] = [
       url: "https://instagram.com/designguru",
       icon: "instagram"
     },
+    gridSpan: 1,
+    rowSpan: 1,
+    background: { 
+      type: 'gradient', 
+      value: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)' 
+    },
+    position: 1,
     width: 300,
     height: 200
   },
@@ -49,6 +63,13 @@ const defaultWidgets: Widget[] = [
       url: "https://myportfolio.com",
       icon: "external-link"
     },
+    gridSpan: 1,
+    rowSpan: 1,
+    background: { 
+      type: 'gradient', 
+      value: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)' 
+    },
+    position: 2,
     width: 300,
     height: 200
   }

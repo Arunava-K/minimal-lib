@@ -1,3 +1,4 @@
+
 export interface UserProfile {
   id: string;
   username: string;
@@ -21,6 +22,9 @@ export interface Widget {
   height: number;
 }
 
+// A type that encompasses any specific widget type
+export type AnyWidget = Widget;
+
 export type WidgetType = 
   | 'link' 
   | 'social' 
@@ -43,3 +47,4 @@ export interface Background {
 }
 
 export type BackgroundType = 'color' | 'gradient' | 'image';
+

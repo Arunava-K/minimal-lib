@@ -11,13 +11,13 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import { Widget, WidgetType, BackgroundType, AnyWidget } from "@/types";
+import { Widget, WidgetType, BackgroundType } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 import WidgetForm, { WidgetFormData } from "@/components/forms/WidgetForm";
 import { extractSpotifyId, extractYoutubeId } from "@/utils/mediaHelpers";
 
 interface AddWidgetDialogProps {
-  onAddWidget: (widget: Omit<AnyWidget, "id">) => void;
+  onAddWidget: (widget: Omit<Widget, "id">) => void;
 }
 
 const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ onAddWidget }) => {

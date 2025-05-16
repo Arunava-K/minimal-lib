@@ -10,7 +10,7 @@ interface LinkWidgetProps extends Omit<BaseWidgetCardProps, 'children'> {}
 
 const LinkWidget: React.FC<LinkWidgetProps> = ({ widget, isPreview, onEdit, onDelete, style }) => {
   const { title, content } = widget;
-  const { url, label, icon } = content as { url: string; label: string; icon?: string };
+  const { url = '', label = '', icon = '' } = (content as { url?: string; label?: string; icon?: string }) || {};
 
   if (isPreview) {
     return (
@@ -30,6 +30,15 @@ const LinkWidget: React.FC<LinkWidgetProps> = ({ widget, isPreview, onEdit, onDe
   // Function to validate URL and extract domain
   const getValidUrl = (urlString: string): { isValid: boolean; domain: string; faviconUrl: string } => {
     try {
+      // Handle empty or undefined URLs
+      if (!urlString || urlString.trim() === '') {
+        return {
+          isValid: false,
+          domain: 'unknown',
+          faviconUrl: ''
+        };
+      }
+      
       // Check if URL has a protocol, if not add https://
       const urlWithProtocol = urlString.startsWith('http://') || urlString.startsWith('https://')
         ? urlString

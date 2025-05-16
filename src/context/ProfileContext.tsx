@@ -23,7 +23,9 @@ const defaultWidgets: Widget[] = [
     title: "About Me",
     content: {
       text: "Hello! I'm a designer passionate about creating beautiful interfaces."
-    }
+    },
+    width: 300,
+    height: 200
   },
   {
     id: uuidv4(),
@@ -34,7 +36,9 @@ const defaultWidgets: Widget[] = [
       username: "designguru",
       url: "https://instagram.com/designguru",
       icon: "instagram"
-    }
+    },
+    width: 300,
+    height: 200
   },
   {
     id: uuidv4(),
@@ -44,7 +48,9 @@ const defaultWidgets: Widget[] = [
       label: "Check out my work",
       url: "https://myportfolio.com",
       icon: "external-link"
-    }
+    },
+    width: 300,
+    height: 200
   }
 ];
 
@@ -68,7 +74,11 @@ export const ProfileProvider: React.FC<{ children: React.ReactNode }> = ({ child
           displayName: user.displayName,
           bio: "Your bio here...",
           avatarUrl: `https://ui-avatars.com/api/?name=${user.displayName.replace(" ", "+")}&background=random`,
-          widgets: defaultWidgets
+          widgets: defaultWidgets,
+          theme: {
+            background: { type: 'color', value: '#f5f7fa' },
+            accentColor: '#5c6ac4'
+          }
         };
         
         setProfile(defaultProfile);
@@ -92,7 +102,14 @@ export const ProfileProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const addWidget = (widget: Omit<Widget, "id">) => {
     if (!profile || !user) return;
     
-    const newWidget = { ...widget, id: uuidv4() };
+    const newWidget = { 
+      ...widget, 
+      id: uuidv4(),
+      width: widget.width || 300,
+      height: widget.height || 200,
+      position: profile.widgets.length
+    };
+    
     const updatedProfile = { 
       ...profile, 
       widgets: [...profile.widgets, newWidget] 

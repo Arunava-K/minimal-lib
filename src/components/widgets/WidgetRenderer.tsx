@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Widget } from '@/types';
 import { ExternalLink } from 'lucide-react';
@@ -13,27 +14,7 @@ import YouTubeWidget from './types/YouTubeWidget';
 // Import other specific widget components here as they are created
 
 import { cn } from "@/lib/utils"; // cn might still be useful for wrapper styling if any
-
-const getBackgroundStyle = (widget: any) => {
-  if (!widget.background) {
-    return {};
-  }
-
-  switch (widget.background.type) {
-    case 'color':
-      return { backgroundColor: widget.background.value };
-    case 'gradient':
-      return { background: widget.background.value };
-    case 'image':
-      return { 
-        backgroundImage: `url(${widget.background.value})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center'
-      };
-    default:
-      return {};
-  }
-};
+import { getBackgroundStyle } from '@/utils/backgroundStyles';
 
 interface WidgetRendererProps {
   widget: Widget;
@@ -42,7 +23,7 @@ interface WidgetRendererProps {
   onDelete?: (id: string) => void;
 }
 
-const WidgetRenderer: React.FC<WidgetRendererProps> = ({ // Changed export to default at the end
+const WidgetRenderer: React.FC<WidgetRendererProps> = ({
   widget,
   isPreview = false,
   onEdit,
@@ -55,15 +36,6 @@ const WidgetRenderer: React.FC<WidgetRendererProps> = ({ // Changed export to de
   switch (widget.type) {
     case 'link':
       // Basic link widget, platform-specific links should ideally be their own types e.g. 'spotify'
-      return (
-        <LinkWidget 
-          widget={widget} 
-          isPreview={isPreview} 
-          onEdit={onEdit} 
-          onDelete={onDelete} 
-          style={backgroundStyle} 
-        />
-      );
       return (
         <LinkWidget 
           widget={widget} 

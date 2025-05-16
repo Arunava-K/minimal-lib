@@ -13,6 +13,7 @@ import Dashboard from "./pages/Dashboard";
 import ProfileView from "./pages/ProfileView";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/common/ProtectedRoute";
+import "./styles/resizable.css";
 
 const queryClient = new QueryClient();
 

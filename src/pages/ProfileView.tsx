@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -105,12 +104,13 @@ const ProfileView = () => {
                 value: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)' 
               },
               position: widget.position,
-              // Add default values for width and height if they don't exist in the DB
-              width: widget.width || 300,
-              height: widget.height || 200
+              // Since width and height properties don't exist in the database schema,
+              // we provide default values
+              width: 300,
+              height: 200
             })) || [],
-            // Add default theme if it doesn't exist in the DB
-            theme: profileData.theme || {
+            // Theme doesn't exist in the profiles table, so we provide a default theme
+            theme: {
               background: { type: 'color', value: '#f5f7fa' },
               accentColor: '#5c6ac4'
             }

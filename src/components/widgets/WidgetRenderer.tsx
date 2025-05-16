@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Widget } from '@/types';
-import { ExternalLink } from 'lucide-react';
 import BaseWidgetCard from './BaseWidgetCard';
 import LinkWidget from './types/LinkWidget';
 import TextWidget from './types/TextWidget';
@@ -11,9 +10,11 @@ import ImageWidget from './types/ImageWidget';
 import SpotifyWidget from './types/SpotifyWidget';
 import InstagramWidget from './types/InstagramWidget';
 import YouTubeWidget from './types/YouTubeWidget';
-// Import other specific widget components here as they are created
+import MapWidget from './types/MapWidget';
+import GithubWidget from './types/GithubWidget';
+import CalendarWidget from './types/CalendarWidget';
 
-import { cn } from "@/lib/utils"; // cn might still be useful for wrapper styling if any
+import { cn } from "@/lib/utils";
 import { getBackgroundStyle } from '@/utils/backgroundStyles';
 
 interface WidgetRendererProps {
@@ -31,11 +32,8 @@ const WidgetRenderer: React.FC<WidgetRendererProps> = ({
 }) => {
   const backgroundStyle = getBackgroundStyle(widget);
 
-  // Note: getSocialIcon function is removed as its logic is now within SocialWidget.tsx
-
   switch (widget.type) {
     case 'link':
-      // Basic link widget, platform-specific links should ideally be their own types e.g. 'spotify'
       return (
         <LinkWidget 
           widget={widget} 
@@ -115,7 +113,36 @@ const WidgetRenderer: React.FC<WidgetRendererProps> = ({
           style={backgroundStyle}
         />
       );
-    // Add cases for other widget types here
+    case 'map':
+      return (
+        <MapWidget
+          widget={widget}
+          isPreview={isPreview}
+          onEdit={onEdit}
+          onDelete={onDelete}
+          style={backgroundStyle}
+        />
+      );
+    case 'github':
+      return (
+        <GithubWidget
+          widget={widget}
+          isPreview={isPreview}
+          onEdit={onEdit}
+          onDelete={onDelete}
+          style={backgroundStyle}
+        />
+      );
+    case 'calendar':
+      return (
+        <CalendarWidget
+          widget={widget}
+          isPreview={isPreview}
+          onEdit={onEdit}
+          onDelete={onDelete}
+          style={backgroundStyle}
+        />
+      );
     default:
       // Fallback for unknown or not-yet-implemented widget types
       return (

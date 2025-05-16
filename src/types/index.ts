@@ -23,7 +23,7 @@ export interface Widget {
 }
 
 // A type that encompasses any specific widget type
-export type AnyWidget = Widget;
+export type Widget = Widget;
 
 export type WidgetType = 
   | 'link' 
@@ -34,7 +34,9 @@ export type WidgetType =
   | 'spotify' 
   | 'youtube'
   | 'quote'
-  | 'instagram';
+  | 'instagram'
+  | 'github'
+  | 'calendar';
 
 export interface Theme {
   background: Background;
@@ -47,4 +49,3 @@ export interface Background {
 }
 
 export type BackgroundType = 'color' | 'gradient' | 'image';
-

@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -99,10 +100,13 @@ const ProfileView = () => {
               content: widget.content as any,
               gridSpan: (widget.grid_span || 1) as 1 | 2,
               rowSpan: (widget.row_span || 1) as 1 | 2,
-              background: widget.background as any || { type: 'gradient', value: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)' },
+              background: { 
+                type: 'gradient', 
+                value: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)' 
+              },
               position: widget.position,
-              width: widget.width,
-              height: widget.height
+              width: widget.width || 300,
+              height: widget.height || 200
             })) || [],
             theme: profileData.theme || {
               background: { type: 'color', value: '#f5f7fa' },

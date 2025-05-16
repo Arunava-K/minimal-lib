@@ -183,7 +183,7 @@ const EditWidgetDialog: React.FC<EditWidgetDialogProps> = ({
   const handleUpdateWidget = () => {
     if (!widget) return;
 
-    let updates: Partial<AnyWidget> = {
+    let updates: Partial<Widget> = {
       title: formData.title,
     };
 

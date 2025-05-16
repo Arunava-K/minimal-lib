@@ -64,7 +64,7 @@ const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ onAddWidget }) => {
   };
 
   const handleAddWidget = () => {
-    let widget: Omit<AnyWidget, "id">;
+    let widget: Omit<Widget, "id">;
     const background = getWidgetBackground();
 
     switch (newWidgetType) {
@@ -76,7 +76,12 @@ const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ onAddWidget }) => {
             url: newWidgetData.linkUrl,
             label: newWidgetData.linkLabel,
           },
-          background
+          background,
+          gridSpan: 1,
+          rowSpan: 1,
+          position: 0,
+          width: 300,
+          height: 200
         };
         break;
       case "social":
@@ -88,7 +93,12 @@ const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ onAddWidget }) => {
             username: newWidgetData.socialUsername,
             url: `https://${newWidgetData.socialPlatform}.com/${newWidgetData.socialUsername}`,
           },
-          background
+          background,
+          gridSpan: 1,
+          rowSpan: 1,
+          position: 0,
+          width: 300,
+          height: 200
         };
         break;
       case "text":
@@ -98,7 +108,12 @@ const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ onAddWidget }) => {
           content: {
             text: newWidgetData.text,
           },
-          background
+          background,
+          gridSpan: 1,
+          rowSpan: 1,
+          position: 0,
+          width: 300,
+          height: 200
         };
         break;
       case "image":
@@ -108,7 +123,12 @@ const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ onAddWidget }) => {
           content: {
             images: [newWidgetData.imageUrl],
           },
-          background
+          background,
+          gridSpan: 1,
+          rowSpan: 1,
+          position: 0,
+          width: 300,
+          height: 200
         };
         break;
       case "map":
@@ -119,7 +139,12 @@ const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ onAddWidget }) => {
             location: newWidgetData.location,
             description: newWidgetData.locationDescription,
           },
-          background
+          background,
+          gridSpan: 1,
+          rowSpan: 1,
+          position: 0,
+          width: 300,
+          height: 200
         };
         break;
       case "spotify":
@@ -133,7 +158,12 @@ const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ onAddWidget }) => {
             url: newWidgetData.spotifyUrl
             // TODO: Add fields like trackName, artistName, albumArtUrl here if fetched
           },
-          background
+          background,
+          gridSpan: 1,
+          rowSpan: 1,
+          position: 0,
+          width: 300,
+          height: 200
         };
         break;
       case "youtube":
@@ -147,7 +177,12 @@ const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ onAddWidget }) => {
             url: newWidgetData.youtubeUrl
             // TODO: Add fields like thumbnailUrl, channelName, viewCount here if fetched
           },
-          background
+          background,
+          gridSpan: 1,
+          rowSpan: 1,
+          position: 0,
+          width: 300,
+          height: 200
         };
         break;
       case "instagram":
@@ -158,7 +193,12 @@ const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ onAddWidget }) => {
             url: newWidgetData.instagramUrl
             // TODO: Add fields like username, profilePicUrl here if fetched
           },
-          background
+          background,
+          gridSpan: 1,
+          rowSpan: 1,
+          position: 0,
+          width: 300,
+          height: 200
         };
         break;
       default:

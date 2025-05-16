@@ -105,9 +105,11 @@ const ProfileView = () => {
                 value: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)' 
               },
               position: widget.position,
+              // Add default values for width and height if they don't exist in the DB
               width: widget.width || 300,
               height: widget.height || 200
             })) || [],
+            // Add default theme if it doesn't exist in the DB
             theme: profileData.theme || {
               background: { type: 'color', value: '#f5f7fa' },
               accentColor: '#5c6ac4'

@@ -27,9 +27,55 @@ const LinkWidget: React.FC<LinkWidgetProps> = ({ widget, isPreview, onEdit, onDe
     );
   }
 
-  // Extract favicon from URL for display
-  const domain = new URL(url).hostname;
-  const favicon = `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
+  // Function to validate URL and extract domain
+  const getValidUrl = (urlString: string): { isValid: boolean; domain: string; faviconUrl: string } => {
+    try {
+      // Check if URL has a protocol, if not add https://
+      const urlWithProtocol = urlString.startsWith('http://') || urlString.startsWith('https://')
+        ? urlString
+        : `https://${urlString}`;
+      
+      const urlObj = new URL(urlWithProtocol);
+      const domain = urlObj.hostname;
+      const faviconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
+      
+      return {
+        isValid: true,
+        domain,
+        faviconUrl
+      };
+    } catch (error) {
+      console.error('Invalid URL:', urlString, error);
+      return {
+        isValid: false,
+        domain: 'unknown',
+        faviconUrl: ''
+      };
+    }
+  };
+
+  // Validate and extract info from URL
+  const { isValid, domain, faviconUrl } = getValidUrl(url || '');
+
+  // If URL is invalid, show a message
+  if (!isValid) {
+    return (
+      <BaseWidgetCard 
+        widget={widget} 
+        onEdit={onEdit} 
+        onDelete={onDelete} 
+        isPreview={isPreview} 
+        style={style} 
+        className="overflow-hidden"
+      >
+        <div className="h-full flex flex-col items-center justify-center p-4 text-center">
+          <ExternalLink className="h-10 w-10 text-muted-foreground mb-2" />
+          <h3 className="text-lg font-semibold mb-1">{title || 'Link Widget'}</h3>
+          <p className="text-sm text-muted-foreground">Invalid URL. Please edit this widget to set a valid URL.</p>
+        </div>
+      </BaseWidgetCard>
+    );
+  }
 
   return (
     <a
@@ -54,7 +100,7 @@ const LinkWidget: React.FC<LinkWidgetProps> = ({ widget, isPreview, onEdit, onDe
           <div className="flex items-center space-x-4">
             <div className="h-12 w-12 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
               <img 
-                src={favicon} 
+                src={faviconUrl} 
                 alt={domain} 
                 className="h-full w-full object-cover"
                 onError={(e) => {

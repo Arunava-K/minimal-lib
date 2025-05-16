@@ -8,7 +8,7 @@ interface QuoteWidgetProps extends Omit<BaseWidgetCardProps, 'children'> {}
 
 const QuoteWidget: React.FC<QuoteWidgetProps> = ({ widget, isPreview, onEdit, onDelete, style }) => {
   const { title, content } = widget;
-  const { text, author } = content as { text: string; author?: string };
+  const { text = 'Add your quote here', author = '' } = (content as { text?: string; author?: string }) || {};
 
   if (isPreview) {
     return (

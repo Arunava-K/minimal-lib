@@ -1,6 +1,5 @@
-
 import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Edit } from "lucide-react";
 import { UserProfile } from "@/types";
@@ -87,7 +86,7 @@ const ProfileView = () => {
             });
           }
 
-          // Convert the Supabase format to our app's format
+          // Convert the Supabase format to our app's format with defaults for missing properties
           const userProfile: UserProfile = {
             id: profileData.id,
             username: profileData.username,
@@ -106,12 +105,11 @@ const ProfileView = () => {
                 value: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)' 
               },
               position: widget.position,
-              // Since width and height properties don't exist in the database schema,
-              // we provide default values
+              // Add default values for width and height if they don't exist
               width: widget.width || 300,
               height: widget.height || 200
             })) || [],
-            // Theme doesn't exist in the profiles table, so we provide a default theme
+            // Add default theme if it doesn't exist
             theme: profileData.theme || {
               background: { type: 'color', value: '#f5f7fa' },
               accentColor: '#5c6ac4'
@@ -200,76 +198,80 @@ const ProfileView = () => {
       </header>
       
       {/* Hero Section with Profile Info */}
-      <motion.section 
-        className="relative overflow-hidden py-20 px-4 text-center"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        style={getBackgroundStyle(profile)}
-      >
-        <div className="max-w-4xl mx-auto">
-          <motion.div 
-            className="mb-8"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
+      {profile && (
+        <>
+          <motion.section 
+            className="relative overflow-hidden py-20 px-4 text-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            style={getBackgroundStyle(profile)}
           >
-            <motion.div 
-              className="h-32 w-32 md:h-40 md:w-40 rounded-full overflow-hidden border-4 border-white shadow-xl mx-auto"
-              whileHover={{ scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 300 }}
-            >
-              <img
-                src={profile.avatarUrl || `https://ui-avatars.com/api/?name=${profile.displayName.replace(" ", "+")}&background=random`}
-                alt={profile.displayName}
-                className="w-full h-full object-cover"
-              />
-            </motion.div>
-            <motion.h1 
-              className="text-4xl md:text-5xl font-bold mt-6 mb-2"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.4 }}
-            >
-              {profile.displayName}
-            </motion.h1>
-            <motion.p 
-              className="text-xl text-gray-600 mb-2"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4, duration: 0.4 }}
-            >
-              @{profile.username}
-            </motion.p>
-            {profile.bio && (
-              <motion.p 
-                className="text-gray-600 max-w-lg mx-auto mt-4 text-lg leading-relaxed"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5, duration: 0.5 }}
+            <div className="max-w-4xl mx-auto">
+              <motion.div 
+                className="mb-8"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
               >
-                {profile.bio}
-              </motion.p>
-            )}
-          </motion.div>
-        </div>
-      </motion.section>
-      
-      {/* Bento Grid Section */}
-      <section className="px-4 py-12 md:py-16 pb-20">
-        <div className="max-w-7xl mx-auto">
-          <BentoGrid 
-            widgets={profile.widgets.sort((a, b) => {
-              // Sort by position if available, otherwise keep original order
-              if (a.position !== undefined && b.position !== undefined) {
-                return a.position - b.position;
-              }
-              return 0;
-            })} 
-            isPreview={true}
-          />
-        </div>
-      </section>
+                <motion.div 
+                  className="h-32 w-32 md:h-40 md:w-40 rounded-full overflow-hidden border-4 border-white shadow-xl mx-auto"
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
+                  <img
+                    src={profile.avatarUrl || `https://ui-avatars.com/api/?name=${profile.displayName.replace(" ", "+")}&background=random`}
+                    alt={profile.displayName}
+                    className="w-full h-full object-cover"
+                  />
+                </motion.div>
+                <motion.h1 
+                  className="text-4xl md:text-5xl font-bold mt-6 mb-2"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3, duration: 0.4 }}
+                >
+                  {profile.displayName}
+                </motion.h1>
+                <motion.p 
+                  className="text-xl text-gray-600 mb-2"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.4, duration: 0.4 }}
+                >
+                  @{profile.username}
+                </motion.p>
+                {profile.bio && (
+                  <motion.p 
+                    className="text-gray-600 max-w-lg mx-auto mt-4 text-lg leading-relaxed"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.5, duration: 0.5 }}
+                  >
+                    {profile.bio}
+                  </motion.p>
+                )}
+              </motion.div>
+            </div>
+          </motion.section>
+          
+          {/* Bento Grid Section */}
+          <section className="px-4 py-12 md:py-16 pb-20">
+            <div className="max-w-7xl mx-auto">
+              <BentoGrid 
+                widgets={profile.widgets.sort((a, b) => {
+                  // Sort by position if available, otherwise keep original order
+                  if (a.position !== undefined && b.position !== undefined) {
+                    return a.position - b.position;
+                  }
+                  return 0;
+                })} 
+                isPreview={true}
+              />
+            </div>
+          </section>
+        </>
+      )}
       
       <ProfileFooter />
     </div>

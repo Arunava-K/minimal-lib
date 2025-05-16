@@ -22,8 +22,8 @@ export interface Widget {
   height: number;
 }
 
-// A type that encompasses any specific widget type
-export type Widget = Widget;
+// Remove this line since it's causing the duplicate identifier error
+// export type Widget = Widget;
 
 export type WidgetType = 
   | 'link' 
